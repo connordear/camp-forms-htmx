@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./:/app
+      - ./data:/app/data
+    environment:
+      - PORT=$PORT
+      - DB_PATH=$DB_PATH
+    ports:
+      - $PORT:$PORT
