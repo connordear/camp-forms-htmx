@@ -2,8 +2,8 @@ root = "."
 tmp_dir = "tmp" 
 
 [build]
-	cmd = "go build -o ./tmp/main ./main.go"
-	bin = "tmp/main"
+	cmd = "GOFLAGS=-buildvcs=false go build -o ./tmp/main ./cmd/web"
+	bin = "./tmp/main"
 	# Watch these directories for changes
 	include_dir = ["internal", "web/templates", "."]
 	exclude_dir = ["tmp", "vendor", "data", "web/static"]

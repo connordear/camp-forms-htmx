@@ -1,10 +1,9 @@
-package handler
+package main
 
 import (
-	"net/http"
-
 	"github.com/connordear/camp-forms/internal/config"
-	_ "github.com/glebarez/go-sqlite"
+	"github.com/connordear/camp-forms/internal/middleware"
+	"net/http"
 )
 
 func getCamps(app *config.Application) http.HandlerFunc {
@@ -19,4 +18,12 @@ func getCamps(app *config.Application) http.HandlerFunc {
 		}
 
 	}
+}
+
+func Router(app *config.Application) *http.ServeMux {
+	router := http.NewServeMux()
+	// router.Handle("GET /", middleware.Logging(getCamps(app), app.InfoLog))
+	router.Handle("GET /camps", middleware.Logging(getCamps(app), app.InfoLog))
+
+	return router
 }

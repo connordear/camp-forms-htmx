@@ -1,6 +1,6 @@
-DROP TABLE db_version;
-DROP TABLE camps;
-DROP TABLE camp_years;
+DROP TABLE IF EXISTS db_version;
+DROP TABLE IF EXISTS camps;
+DROP TABLE IF EXISTS camp_years;
 
 CREATE TABLE IF NOT EXISTS db_version (
 	major integer,
@@ -19,8 +19,7 @@ CREATE TABLE IF NOT EXISTS camps (
 
 CREATE TABLE IF NOT EXISTS camp_years (
 	camp_id integer NOT NULL
-		REFERENCES camps (id) 
-		ON DELETE CASCADE,
+		REFERENCES camps (id) ON DELETE CASCADE,
 	year varchar(4),
 	PRIMARY KEY (camp_id, year)
 );

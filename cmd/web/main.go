@@ -8,7 +8,6 @@ import (
 
 	"github.com/connordear/camp-forms/internal/config"
 	"github.com/connordear/camp-forms/internal/db"
-	"github.com/connordear/camp-forms/internal/handler"
 	"github.com/connordear/camp-forms/internal/models"
 )
 
@@ -29,7 +28,7 @@ func main() {
 
 	server := http.Server{
 		Addr:    *port,
-		Handler: handler.Routes(app),
+		Handler: Router(app),
 	}
 
 	app.InfoLog.Println("Listening on port ", *port)
