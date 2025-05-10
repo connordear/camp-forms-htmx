@@ -6,10 +6,15 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/connordear/camp-forms/internal/config"
 	"github.com/connordear/camp-forms/internal/db"
 	"github.com/connordear/camp-forms/internal/models"
 )
+
+type application struct {
+	ErrorLog *log.Logger
+	InfoLog  *log.Logger
+	Camps    *models.CampModel
+}
 
 func main() {
 	port := flag.String("port", ":4000", "HTTP Port")
@@ -20,15 +25,16 @@ func main() {
 
 	database := db.InitDatabase(infoLog, errorLog)
 
-	app := &config.Application{
+	app := &application{
 		ErrorLog: errorLog,
 		InfoLog:  infoLog,
 		Camps:    &models.CampModel{DB: database},
 	}
 
 	server := http.Server{
-		Addr:    *port,
-		Handler: Router(app),
+		Addr:     *port,
+		Handler:  Router(app),
+		ErrorLog: errorLog,
 	}
 
 	app.InfoLog.Println("Listening on port ", *port)
