@@ -24,6 +24,7 @@ COPY .air.toml .
 
 # Expose the port the app runs on
 EXPOSE $PORT
+EXPOSE $AIR_PROXY_PORT
 
 ENV DB_PATH = $DB_PATH
 

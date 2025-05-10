@@ -23,12 +23,20 @@ func main() {
 	infoLog := log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "[ERROR]\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	database := db.InitDatabase(infoLog, errorLog)
+	db, err := database.OpenDb(os.Getenv("DB_PATH"))
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+	defer db.Close()
 
 	app := &application{
 		ErrorLog: errorLog,
 		InfoLog:  infoLog,
-		Camps:    &models.CampModel{DB: database},
+		Camps:    &models.CampModel{DB: db},
+	}
+
+	if err = app.initDatabase(db); err != nil {
+		errorLog.Fatal(err)
 	}
 
 	server := http.Server{

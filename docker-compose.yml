@@ -8,6 +8,8 @@ services:
       - ./data:/app/data
     environment:
       - PORT=$PORT
+      - AIR_PROXY_PORT=$AIR_PROXY_PORT
       - DB_PATH=$DB_PATH
     ports:
       - $PORT:$PORT
+      - $AIR_PROXY_PORT:$AIR_PROXY_PORT

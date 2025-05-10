@@ -1,49 +1,36 @@
-package db
+package database
 
 import (
 	"database/sql"
-	"log"
 	"os"
 
 	_ "github.com/glebarez/go-sqlite"
 )
 
-func RunSqlScript(errLog *log.Logger, db *sql.DB, sqlFilePath string) {
+func RunSqlScript(db *sql.DB, sqlFilePath string) error {
 	sqlBytes, err := os.ReadFile(sqlFilePath)
 	if err != nil {
-		errLog.Fatalf("Error reading SQL file '%s': %v", sqlFilePath, err)
+		return err
 	}
 	sqlScript := string(sqlBytes)
 
 	_, err = db.Exec(sqlScript)
 	if err != nil {
-		errLog.Fatalf("Error executing SQL script from '%s': %v", sqlFilePath, err)
+		return err
 	}
+	return nil
 }
 
-func InitDatabase(infoLog *log.Logger, errLog *log.Logger) *sql.DB {
-	db, err := sql.Open("sqlite", os.Getenv("DB_PATH"))
+func OpenDb(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("sqlite", dsn)
 
 	if err != nil {
-		errLog.Fatal(err)
+		return nil, err
 	}
 
-	var major, minor int
-	err = db.QueryRow("select major, minor from db_version").Scan(&major, &minor)
-
-	if err != nil {
-		infoLog.Println("No database version detected, running initialization...")
-		RunSqlScript(errLog, db, "./internal/db/migrations/init.sql")
+	if err = db.Ping(); err != nil {
+		return nil, err
 	}
 
-	err = db.QueryRow("select major, minor from db_version").Scan(&major, &minor)
-	if err != nil {
-		errLog.Fatal(err)
-	}
-
-	infoLog.Printf("Database Version %d.%d", major, minor)
-
-	// TODO: Check if there are new migrations available and run them
-	// For now we can put everything in the init script and re run it every time
-	return db
+	return db, nil
 }

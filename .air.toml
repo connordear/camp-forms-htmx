@@ -13,7 +13,7 @@ tmp_dir = "tmp"
 	delay = 1000
 [proxy]
 	enabled = true
-	proxy_port = 4001
+	proxy_port = 4001 # TODO: how to convert to env vals?
 	app_port = 4000
 
 [log]
