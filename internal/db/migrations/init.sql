@@ -18,10 +18,11 @@ CREATE TABLE IF NOT EXISTS camps (
 );
 
 CREATE TABLE IF NOT EXISTS camp_years (
-	camp_id integer NOT NULL
-		REFERENCES camps (id) ON DELETE CASCADE,
+	camp_id integer NOT NULL,
 	year varchar(4),
-	PRIMARY KEY (camp_id, year)
+	PRIMARY KEY (camp_id, year),
+FOREIGN KEY (camp_id)
+		REFERENCES camps (id) ON DELETE CASCADE
 );
 
 INSERT INTO camps (name) VALUES ('New Camp');
