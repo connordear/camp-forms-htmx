@@ -12,7 +12,7 @@ type RegistrationModel struct {
 	DB *sql.DB
 }
 
-func (m *RegistrationModel) Add(reg Registration) (int, error) {
+func (m *RegistrationModel) Add(reg *Registration) (int, error) {
 	sql := `INSERT INTO registrations (for_camp, camp_year)
 	VALUES (?, ?)`
 

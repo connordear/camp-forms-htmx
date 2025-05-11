@@ -3,37 +3,10 @@ package main
 import (
 	"html/template"
 	"net/http"
-	"os"
 
 	"github.com/connordear/camp-forms/internal/middleware"
+	"github.com/connordear/camp-forms/internal/models"
 )
-
-func page(app *application, pageName string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		fullPath := "./ui/html/pages/" + pageName
-
-		if _, err := os.Stat(fullPath); err != nil {
-			http.NotFound(w, r)
-			return
-		}
-
-		files := []string{
-			"./ui/html/base.tmpl",
-			fullPath,
-		}
-
-		ts, err := template.ParseFiles(files...)
-		if err != nil {
-			app.serverError(w, err)
-			return
-		}
-
-		err = ts.ExecuteTemplate(w, "base", nil)
-		if err != nil {
-			app.serverError(w, err)
-		}
-	}
-}
 
 func getCamps(app *application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +35,43 @@ func deleteAll(app *application) http.HandlerFunc {
 	}
 }
 
+func createRegistration(app *application) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", http.MethodPost)
+			app.clientError(w, http.StatusMethodNotAllowed)
+			return
+		}
+
+		//fName := "John"
+		//lName := "Doe"
+
+		newReg := models.Registration{
+			ForCamp:  1,
+			CampYear: 2025,
+		}
+		id, err := app.Registrations.Add(&newReg)
+		newReg.ID = id
+
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+		tmplFile := "./ui/html/templates/registration.tmpl"
+		tmpl, err := template.New(tmplFile).ParseFiles(tmplFile)
+		if err != nil {
+			app.serverError(w, err)
+		}
+
+		err = tmpl.ExecuteTemplate(w, "registration", newReg)
+		if err != nil {
+			app.serverError(w, err)
+		}
+
+	}
+
+}
+
 func Router(app *application) *http.ServeMux {
 	router := http.NewServeMux()
 
@@ -72,6 +82,7 @@ func Router(app *application) *http.ServeMux {
 	router.Handle("GET /reset", middleware.Logging(page(app, "reset.tmpl"), app.InfoLog))
 	router.Handle("GET /camps", middleware.Logging(getCamps(app), app.InfoLog))
 	router.Handle("DELETE /all", middleware.Logging(deleteAll(app), app.InfoLog))
+	router.Handle("POST /registrations", middleware.Logging(createRegistration(app), app.InfoLog))
 
 	return router
 }

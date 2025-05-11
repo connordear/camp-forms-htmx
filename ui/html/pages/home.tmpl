@@ -1,6 +1,9 @@
 {{define "title"}}Home{{end}}
 
 {{define "main"}}
-    <h2>Latest Snippets</h2>
+    <h2>Latest Registrations</h2>
     <p>There's nothing to see here yet! Or is there??? huh</p>
+    <button hx-post="/registrations" hx-target="next ul" hx-swap="beforeend">Add Registration</button>
+    <ul>
+    </ul>
 {{end}}

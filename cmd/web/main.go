@@ -11,10 +11,11 @@ import (
 )
 
 type application struct {
-	ErrorLog *log.Logger
-	InfoLog  *log.Logger
-	Camps    *models.CampModel
-	Meta     *models.MetaModel
+	ErrorLog      *log.Logger
+	InfoLog       *log.Logger
+	Camps         *models.CampModel
+	Meta          *models.MetaModel
+	Registrations *models.RegistrationModel
 }
 
 func main() {
@@ -31,10 +32,11 @@ func main() {
 	defer db.Close()
 
 	app := &application{
-		ErrorLog: errorLog,
-		InfoLog:  infoLog,
-		Camps:    &models.CampModel{DB: db},
-		Meta:     &models.MetaModel{DB: db},
+		ErrorLog:      errorLog,
+		InfoLog:       infoLog,
+		Camps:         &models.CampModel{DB: db},
+		Meta:          &models.MetaModel{DB: db},
+		Registrations: &models.RegistrationModel{DB: db},
 	}
 
 	if err = app.Meta.InitDatabase(infoLog); err != nil {

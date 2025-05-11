@@ -1,12 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
+	"html/template"
 	"net/http"
+	"os"
 	"runtime/debug"
-
-	database "github.com/connordear/camp-forms/internal/db"
 )
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
@@ -24,27 +23,29 @@ func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
 
-func (app *application) initDatabase(db *sql.DB) error {
-	var major, minor int
-	err := db.QueryRow("select major, minor from db_version").Scan(&major, &minor)
+func page(app *application, pageName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fullPath := "./ui/html/pages/" + pageName
 
-	if err != nil {
-		app.InfoLog.Println("No database version detected, running initialization...")
-		err := database.RunSqlScript(db, "./internal/db/migrations/init.sql")
+		if _, err := os.Stat(fullPath); err != nil {
+			http.NotFound(w, r)
+			return
+		}
 
+		files := []string{
+			"./ui/html/base.tmpl",
+			fullPath,
+		}
+
+		ts, err := template.ParseFiles(files...)
 		if err != nil {
-			app.ErrorLog.Fatal(err)
+			app.serverError(w, err)
+			return
+		}
+
+		err = ts.ExecuteTemplate(w, "base", nil)
+		if err != nil {
+			app.serverError(w, err)
 		}
 	}
-
-	err = db.QueryRow("select major, minor from db_version").Scan(&major, &minor)
-	if err != nil {
-		app.ErrorLog.Fatal(err)
-	}
-
-	app.InfoLog.Printf("Database Version %d.%d", major, minor)
-
-	// TODO: Check if there are new migrations available and run them
-	// For now we can put everything in the init script and re run it every time
-	return nil
 }
