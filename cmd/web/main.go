@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/connordear/camp-forms/internal/db"
+	database "github.com/connordear/camp-forms/internal/db"
 	"github.com/connordear/camp-forms/internal/models"
 )
 
@@ -14,6 +14,7 @@ type application struct {
 	ErrorLog *log.Logger
 	InfoLog  *log.Logger
 	Camps    *models.CampModel
+	Meta     *models.MetaModel
 }
 
 func main() {
@@ -33,9 +34,10 @@ func main() {
 		ErrorLog: errorLog,
 		InfoLog:  infoLog,
 		Camps:    &models.CampModel{DB: db},
+		Meta:     &models.MetaModel{DB: db},
 	}
 
-	if err = app.initDatabase(db); err != nil {
+	if err = app.Meta.InitDatabase(infoLog); err != nil {
 		errorLog.Fatal(err)
 	}
 

@@ -3,21 +3,25 @@ package main
 import (
 	"html/template"
 	"net/http"
+	"os"
 
 	"github.com/connordear/camp-forms/internal/middleware"
 )
 
-func home(app *application) http.HandlerFunc {
+func page(app *application, pageName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
+		fullPath := "./ui/html/pages/" + pageName
+
+		if _, err := os.Stat(fullPath); err != nil {
 			http.NotFound(w, r)
 			return
 		}
 
 		files := []string{
 			"./ui/html/base.tmpl",
-			"./ui/html/pages/home.tmpl",
+			fullPath,
 		}
+
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
 			app.serverError(w, err)
@@ -45,14 +49,29 @@ func getCamps(app *application) http.HandlerFunc {
 	}
 }
 
+func deleteAll(app *application) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		app.InfoLog.Println("Resetting DB...")
+		err := app.Meta.RunMigrations()
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		http.Redirect(w, r, "/", 303)
+	}
+}
+
 func Router(app *application) *http.ServeMux {
 	router := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static"))
 	router.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
-	router.Handle("GET /", middleware.Logging(home(app), app.InfoLog))
+	router.Handle("GET /", middleware.Logging(page(app, "home.tmpl"), app.InfoLog))
+	router.Handle("GET /reset", middleware.Logging(page(app, "reset.tmpl"), app.InfoLog))
 	router.Handle("GET /camps", middleware.Logging(getCamps(app), app.InfoLog))
+	router.Handle("DELETE /all", middleware.Logging(deleteAll(app), app.InfoLog))
 
 	return router
 }
