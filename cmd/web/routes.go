@@ -57,7 +57,7 @@ func createRegistration(app *application) http.HandlerFunc {
 			app.serverError(w, err)
 			return
 		}
-		tmplFile := "./ui/html/templates/registration.tmpl"
+		tmplFile := "./ui/html/partials/registration.tmpl"
 		tmpl, err := template.New(tmplFile).ParseFiles(tmplFile)
 		if err != nil {
 			app.serverError(w, err)
@@ -78,8 +78,8 @@ func Router(app *application) *http.ServeMux {
 	fileServer := http.FileServer(http.Dir("./ui/static"))
 	router.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
-	router.Handle("GET /", middleware.Logging(page(app, "home.tmpl"), app.InfoLog))
-	router.Handle("GET /reset", middleware.Logging(page(app, "reset.tmpl"), app.InfoLog))
+	router.Handle("GET /", middleware.Logging(page(app, "home.tmpl", nil), app.InfoLog))
+	router.Handle("GET /reset", middleware.Logging(page(app, "reset.tmpl", nil), app.InfoLog))
 	router.Handle("GET /camps", middleware.Logging(getCamps(app), app.InfoLog))
 	router.Handle("DELETE /all", middleware.Logging(deleteAll(app), app.InfoLog))
 	router.Handle("POST /registrations", middleware.Logging(createRegistration(app), app.InfoLog))

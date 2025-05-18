@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -13,6 +14,7 @@ import (
 type application struct {
 	ErrorLog      *log.Logger
 	InfoLog       *log.Logger
+	TemplateCache map[string]*template.Template
 	Camps         *models.CampModel
 	Meta          *models.MetaModel
 	Registrations *models.RegistrationModel
@@ -31,9 +33,15 @@ func main() {
 	}
 	defer db.Close()
 
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
 	app := &application{
 		ErrorLog:      errorLog,
 		InfoLog:       infoLog,
+		TemplateCache: templateCache,
 		Camps:         &models.CampModel{DB: db},
 		Meta:          &models.MetaModel{DB: db},
 		Registrations: &models.RegistrationModel{DB: db},
