@@ -1,7 +1,7 @@
 package main
 
 import (
-	"html/template"
+	"fmt"
 	"net/http"
 
 	"github.com/connordear/camp-forms/internal/middleware"
@@ -43,9 +43,6 @@ func createRegistration(app *application) http.HandlerFunc {
 			return
 		}
 
-		//fName := "John"
-		//lName := "Doe"
-
 		newReg := models.Registration{
 			ForCamp:  1,
 			CampYear: 2025,
@@ -57,9 +54,10 @@ func createRegistration(app *application) http.HandlerFunc {
 			app.serverError(w, err)
 			return
 		}
-		tmplFile := "./ui/html/partials/registration.tmpl"
-		tmpl, err := template.New(tmplFile).ParseFiles(tmplFile)
-		if err != nil {
+
+		tmpl, ok := app.TemplateCache["registration.tmpl"]
+		if !ok {
+			err := fmt.Errorf("error parsing registration template")
 			app.serverError(w, err)
 		}
 

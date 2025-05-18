@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS registrations (
         ON DELETE RESTRICT
 );
 
-CREATE TRIGGER registrations_set_created_at
+CREATE TRIGGER IF NOT EXISTS registrations_set_created_at
 AFTER INSERT ON registrations
 FOR EACH ROW
 WHEN NEW.created_at IS NULL
@@ -50,7 +50,7 @@ BEGIN
     WHERE id = NEW.id;
 END;
 
-CREATE TRIGGER registrations_update_updated_at
+CREATE TRIGGER IF NOT EXISTS registrations_update_updated_at
 AFTER UPDATE ON registrations
 FOR EACH ROW
 BEGIN
@@ -58,7 +58,7 @@ BEGIN
     WHERE id = OLD.id;
 END;
 
-CREATE TRIGGER registrations_set_updated_at
+CREATE TRIGGER IF NOT EXISTS registrations_set_updated_at
 AFTER INSERT ON registrations
 FOR EACH ROW
 WHEN NEW.updated_at IS NULL

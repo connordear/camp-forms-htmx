@@ -34,5 +34,17 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		cache[name] = ts
 	}
 
+	partials, err := filepath.Glob("./ui/html/partials/*.tmpl")
+	for _, partial := range partials {
+		name := filepath.Base(partial)
+
+		tmpl, err := template.New(partial).ParseFiles(partial)
+		if err != nil {
+			return nil, err
+		}
+
+		cache[name] = tmpl
+	}
+
 	return cache, nil
 }

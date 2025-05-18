@@ -23,20 +23,6 @@ func (app *application) notFound(w http.ResponseWriter) {
 
 func page(app *application, pageName string, data any) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// fullPath := "./ui/html/pages/" + pageName
-
-		// if _, err := os.Stat(fullPath); err != nil {
-		// 	http.NotFound(w, r)
-		// 	return
-		// }
-
-		// files := []string{
-		// 	"./ui/html/base.tmpl",
-		// 	fullPath,
-		// }
-
-		// ts, err := template.ParseFiles(files...)
-
 		ts, ok := app.TemplateCache[pageName]
 		if !ok {
 			err := fmt.Errorf("the template %s does not exist", pageName)
