@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/connordear/camp-forms/internal/middleware"
 	"github.com/connordear/camp-forms/internal/models"
 )
 
-func getCamps(app *application) http.HandlerFunc {
+func (app *application) getCamps() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		camps, err := app.Camps.GetAll("2025")
 		if err != nil {
@@ -22,7 +21,7 @@ func getCamps(app *application) http.HandlerFunc {
 	}
 }
 
-func deleteAll(app *application) http.HandlerFunc {
+func (app *application) deleteAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		app.InfoLog.Println("Resetting DB...")
 		err := app.Meta.RunMigrations()
@@ -35,7 +34,7 @@ func deleteAll(app *application) http.HandlerFunc {
 	}
 }
 
-func createRegistration(app *application) http.HandlerFunc {
+func (app *application) createRegistration() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.Header().Set("Allow", http.MethodPost)
@@ -55,32 +54,22 @@ func createRegistration(app *application) http.HandlerFunc {
 			return
 		}
 
-		tmpl, ok := app.TemplateCache["registration.tmpl"]
-		if !ok {
-			err := fmt.Errorf("error parsing registration template")
-			app.serverError(w, err)
-		}
-
-		err = tmpl.ExecuteTemplate(w, "registration", newReg)
-		if err != nil {
-			app.serverError(w, err)
-		}
-
+		app.render(w, "registration.tmpl", "registration", newReg)
 	}
 
 }
 
-func Router(app *application) *http.ServeMux {
+func (app *application) router() *http.ServeMux {
 	router := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static"))
 	router.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
-	router.Handle("GET /", middleware.Logging(page(app, "home.tmpl", nil), app.InfoLog))
-	router.Handle("GET /reset", middleware.Logging(page(app, "reset.tmpl", nil), app.InfoLog))
-	router.Handle("GET /camps", middleware.Logging(getCamps(app), app.InfoLog))
-	router.Handle("DELETE /all", middleware.Logging(deleteAll(app), app.InfoLog))
-	router.Handle("POST /registrations", middleware.Logging(createRegistration(app), app.InfoLog))
+	router.HandleFunc("GET /", middleware.Logging(app.page("home.tmpl", nil), app.InfoLog))
+	router.HandleFunc("GET /reset", middleware.Logging(app.page("reset.tmpl", nil), app.InfoLog))
+	router.HandleFunc("GET /camps", middleware.Logging(app.getCamps(), app.InfoLog))
+	router.HandleFunc("DELETE /all", middleware.Logging(app.deleteAll(), app.InfoLog))
+	router.HandleFunc("POST /registrations", middleware.Logging(app.createRegistration(), app.InfoLog))
 
 	return router
 }

@@ -53,7 +53,7 @@ func main() {
 
 	server := http.Server{
 		Addr:     *port,
-		Handler:  Router(app),
+		Handler:  app.router(),
 		ErrorLog: errorLog,
 	}
 
