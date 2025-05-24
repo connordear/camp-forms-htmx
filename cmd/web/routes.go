@@ -5,6 +5,8 @@ import (
 
 	"github.com/connordear/camp-forms/internal/middleware"
 	"github.com/connordear/camp-forms/internal/models"
+	"github.com/julienschmidt/httprouter"
+	"github.com/justinas/alice"
 )
 
 func (app *application) getCamps() http.HandlerFunc {
@@ -36,12 +38,6 @@ func (app *application) deleteAll() http.HandlerFunc {
 
 func (app *application) createRegistration() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			w.Header().Set("Allow", http.MethodPost)
-			app.clientError(w, http.StatusMethodNotAllowed)
-			return
-		}
-
 		newReg := models.Registration{
 			ForCamp:  1,
 			CampYear: 2025,
@@ -59,17 +55,19 @@ func (app *application) createRegistration() http.HandlerFunc {
 
 }
 
-func (app *application) router() *http.ServeMux {
-	router := http.NewServeMux()
+func (app *application) router() http.Handler {
+	router := httprouter.New()
 
 	fileServer := http.FileServer(http.Dir("./ui/static"))
-	router.Handle("GET /static/", http.StripPrefix("/static", fileServer))
+	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
 
-	router.HandleFunc("GET /", middleware.Logging(app.page("home.tmpl", nil), app.InfoLog))
-	router.HandleFunc("GET /reset", middleware.Logging(app.page("reset.tmpl", nil), app.InfoLog))
-	router.HandleFunc("GET /camps", middleware.Logging(app.getCamps(), app.InfoLog))
-	router.HandleFunc("DELETE /all", middleware.Logging(app.deleteAll(), app.InfoLog))
-	router.HandleFunc("POST /registrations", middleware.Logging(app.createRegistration(), app.InfoLog))
+	router.HandlerFunc(http.MethodGet, "/", app.page("home.tmpl", nil))
+	router.HandlerFunc(http.MethodGet, "/reset", app.page("reset.tmpl", nil))
+	router.HandlerFunc(http.MethodGet, "/camps", app.getCamps())
+	router.HandlerFunc(http.MethodDelete, "/all", app.deleteAll())
+	router.HandlerFunc(http.MethodPost, "/registrations", app.createRegistration())
 
-	return router
+	standard := alice.New(middleware.RecoverPanic(app.ErrorLog), middleware.Logging(app.InfoLog), middleware.SecureHeaders)
+
+	return standard.Then(router)
 }
