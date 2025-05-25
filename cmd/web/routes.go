@@ -39,6 +39,7 @@ func (app *application) deleteAll() http.HandlerFunc {
 func (app *application) createRegistration() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newReg := models.Registration{
+			ForUser:  1,
 			ForCamp:  1,
 			CampYear: 2025,
 		}
@@ -55,13 +56,30 @@ func (app *application) createRegistration() http.HandlerFunc {
 
 }
 
+func (app *application) home() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		regs, err := app.Registrations.GetAll(1, 2025)
+
+		if err != nil {
+			app.serverError(w, err)
+		}
+
+		app.page("home.tmpl", regs)(w, r)
+	}
+}
+
 func (app *application) router() http.Handler {
 	router := httprouter.New()
+
+	router.NotFound = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		app.notFound(w)
+	})
 
 	fileServer := http.FileServer(http.Dir("./ui/static"))
 	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
 
-	router.HandlerFunc(http.MethodGet, "/", app.page("home.tmpl", nil))
+	router.HandlerFunc(http.MethodGet, "/", app.home())
 	router.HandlerFunc(http.MethodGet, "/reset", app.page("reset.tmpl", nil))
 	router.HandlerFunc(http.MethodGet, "/camps", app.getCamps())
 	router.HandlerFunc(http.MethodDelete, "/all", app.deleteAll())

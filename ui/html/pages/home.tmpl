@@ -2,8 +2,17 @@
 
 {{define "main"}}
     <h2>Latest Registrations</h2>
-    <p>There's nothing to see here yet! Or is there??? huh</p>
+    <p>There&apos;s nothing to see here yet! Or is there??? huh</p>
     <button hx-post="/registrations" hx-target="next ul" hx-swap="beforeend">Add Registration</button>
     <ul>
+    {{ range . }}
+        <li>
+            <p>{{ .ID }}</p>
+            <h2>{{ .FirstName }}</h2>
+            <p>{{ .LastName }}</p>
+        </li>
+
+
+    {{ end }}
     </ul>
 {{end}}

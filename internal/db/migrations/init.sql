@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS db_version;
 DROP TABLE IF EXISTS camps;
 DROP TABLE IF EXISTS camp_years;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS db_version (
 	major integer,
@@ -32,8 +33,11 @@ INSERT INTO camp_years (camp_id, year) VALUES (last_insert_rowid(), strftime('%Y
 
 CREATE TABLE IF NOT EXISTS registrations (
     id integer PRIMARY KEY,
+    for_user integer NOT NULL,
     for_camp integer NOT NULL,
     camp_year integer NOT NULL,
+    first_name text,
+    last_name text,
     created_at text,
     updated_at text,
     FOREIGN KEY (for_camp, camp_year)
@@ -67,4 +71,14 @@ BEGIN
     WHERE id = NEW.id;
 END;
 
+
+---
+
+CREATE TABLE IF NOT EXISTS users (
+    id integer PRIMARY KEY,
+    username text UNIQUE NOT NULL,
+    password text NOT NULL
+);
+
+INSERT INTO users (username, password) VALUES ("admin", "admin");
 
