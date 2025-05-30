@@ -39,9 +39,14 @@ func (app *application) deleteAll() http.HandlerFunc {
 func (app *application) createRegistration() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newReg := models.Registration{
-			ForUser:  1,
-			ForCamp:  1,
-			CampYear: 2025,
+			ForUser:   1,
+			FirstName: "Leon",
+			LastName:  "Draisaitl",
+			ForCamp: models.Camp{
+				ID:   1,
+				Year: "2025",
+				Name: "New Camp",
+			},
 		}
 		id, err := app.Registrations.Add(&newReg)
 		newReg.ID = id

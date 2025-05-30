@@ -1,3 +1,6 @@
 {{ define "registration" }}
-<li>{{ .ID }}</li>
+        <li>
+            <p>{{ .ForCamp.Name }}</p>
+            <h2>{{ .FirstName }} {{ .LastName }}</h2>
+        </li>
 {{ end }}

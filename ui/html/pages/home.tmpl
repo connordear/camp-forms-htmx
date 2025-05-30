@@ -6,12 +6,7 @@
     <button hx-post="/registrations" hx-target="next ul" hx-swap="beforeend">Add Registration</button>
     <ul>
     {{ range . }}
-        <li>
-            <p>{{ .ID }}</p>
-            <h2>{{ .FirstName }}</h2>
-            <p>{{ .LastName }}</p>
-        </li>
-
+        {{ template "registration" . }}
 
     {{ end }}
     </ul>
