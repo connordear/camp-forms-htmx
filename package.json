@@ -1,0 +1,23 @@
+{
+  "name": "camp-forms",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tailwindcss -i ./ui/static/css/input.css -o ./ui/static/css/tailwind.css --minify",
+    "watch": "npx tailwindcss -i ./ui/static/css/input.css -o ./ui/static/css/tailwind.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/connordear/camp-forms-htmx.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/connordear/camp-forms-htmx/issues"
+  },
+  "homepage": "https://github.com/connordear/camp-forms-htmx#readme",
+  "description": "",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

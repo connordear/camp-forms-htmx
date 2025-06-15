@@ -1,13 +1,14 @@
 {{define "title"}}Home{{end}}
 
 {{define "main"}}
-    <h2>Latest Registrations</h2>
-    <p>There&apos;s nothing to see here yet! Or is there??? huh</p>
-    <button hx-post="/registrations" hx-target="next ul" hx-swap="beforeend">Add Registration</button>
-    <ul>
-    {{ range . }}
-        {{ template "registration" . }}
-
-    {{ end }}
-    </ul>
+    <div class="flex col gap-5">
+        <h2>Latest Registrations</h2>
+        <p class="font-bold text-orange-400 bg-violet-500">There&apos;s nothing to see here yet! Or is there??? huh is this gonna change</p>
+        <button hx-post="/registrations" hx-target="next ul" hx-swap="beforeend">Add Registration</button>
+        <ul>
+        {{ range . }}
+            {{ template "registration" }}
+        {{ end }}
+        </ul>
+    </div>
 {{end}}

@@ -3,8 +3,10 @@ package main
 import (
 	"net/http"
 
+	"github.com/a-h/templ"
 	"github.com/connordear/camp-forms/internal/middleware"
 	"github.com/connordear/camp-forms/internal/models"
+	"github.com/connordear/camp-forms/ui/components"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
 )
@@ -65,12 +67,18 @@ func (app *application) home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		regs, err := app.Registrations.GetAll(1, 2025)
-
 		if err != nil {
-			app.serverError(w, err)
+			app.ErrorLog.Fatal(err)
 		}
+		components.HomePage(regs).Render(r.Context(), w)
+		// app.page("home.tmpl", regs)(w, r)
 
-		app.page("home.tmpl", regs)(w, r)
+	}
+}
+
+func (app *application) helloHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		components.Hello("John").Render(r.Context(), w)
 	}
 }
 
@@ -87,6 +95,7 @@ func (app *application) router() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/", app.home())
 	router.HandlerFunc(http.MethodGet, "/reset", app.page("reset.tmpl", nil))
 	router.HandlerFunc(http.MethodGet, "/camps", app.getCamps())
+	router.Handler(http.MethodGet, "/hello", templ.Handler(components.Hello("John")))
 	router.HandlerFunc(http.MethodDelete, "/all", app.deleteAll())
 	router.HandlerFunc(http.MethodPost, "/registrations", app.createRegistration())
 

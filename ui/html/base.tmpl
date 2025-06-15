@@ -5,10 +5,11 @@
         <meta charset='utf-8'>
         <title>{{template "title" .}} - Snippetbox</title>
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+        <link href="static/css/tailwind.css" rel="stylesheet">
     </head>
     <body>
         <header>
-            <h1><a href='/'>Camp Forms</a></h1>
+            <h1 class="font-italic text-3xl text-green"><a href='/'>Camp Forms</a></h1>
             {{ template "nav" }}
         </header>
         <main>
