@@ -31,7 +31,7 @@ func HomePage(registrations []*models.Registration) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Snippetbox</title><script src=\"https://unpkg.com/htmx.org@2.0.4\" integrity=\"sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+\" crossorigin=\"anonymous\"></script><link href=\"static/css/tailwind.css\" rel=\"stylesheet\"></head><body><main><div class=\"flex col gap-2 mt-4\"><h2>Latest Registrations</h2><p class=\"font-bold text-orange-400 bg-violet-500\">yoyoyyoooyooo hahahah hi hi this There&apos;s nothing to see here yet! Or is there??? huh is this gonna change</p><button hx-post=\"/registrations\" hx-target=\"next ul\" hx-swap=\"beforeend\">Add Registration</button><ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Snippetbox</title><script src=\"https://unpkg.com/htmx.org@2.0.4\" integrity=\"sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+\" crossorigin=\"anonymous\"></script><link href=\"static/css/output.css\" rel=\"stylesheet\"></head><body><main><div class=\"flex col gap-2 mt-4 bg-red-200\"><h2>Latest Registrations</h2><p class=\"font-bold text-yellow-400 bg-slate-500\">yoyoyyoooyooo hahahah hi hi this There&apos;s nothing to see here yet! Or is there??? this gonna change</p><button hx-post=\"/registrations\" hx-target=\"next ul\" hx-swap=\"beforeend\">Add Registration</button><ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -43,7 +43,7 @@ func HomePage(registrations []*models.Registration) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(reg.FirstName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components/home.templ`, Line: 29, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components/home.templ`, Line: 28, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {

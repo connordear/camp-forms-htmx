@@ -9,15 +9,14 @@ templ HomePage(registrations []*models.Registration) {
 			<meta charset="utf-8"/>
 			<title>Snippetbox</title>
 			<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
-			<link href="static/css/tailwind.css" rel="stylesheet"/>
+			<link href="static/css/output.css" rel="stylesheet"/>
 		</head>
 		<body>
 			<main>
-				<div class="flex col gap-2 mt-4">
+				<div class="flex col gap-2 mt-4 bg-red-200">
 					<h2>Latest Registrations</h2>
-					<p class="font-bold text-orange-400 bg-violet-500">
+					<p class="font-bold text-yellow-400 bg-slate-500">
 						yoyoyyoooyooo hahahah hi hi this There&apos;s nothing to see here yet! Or is there???
-						huh is
 						this gonna change
 					</p>
 					<button hx-post="/registrations" hx-target="next ul" hx-swap="beforeend">
