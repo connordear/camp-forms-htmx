@@ -1,17 +1,30 @@
 services:
-  app:
-    build:
-      context: .
-      target: development
-    volumes:
-      - ./:/app
-      - ./data:/app/data
-    environment:
-      - PORT=$PORT
-      - AIR_PROXY_PORT=$AIR_PROXY_PORT
-      - DB_PATH=$DB_PATH
+  go-app:
+    # Replace 'your-dockerhub-username/your-app-name' with your image name
+    # The ':latest' tag is what the updater will track
+    image: cdear/camp-forms:latest
+    container_name: go-htmx-app
+    restart: unless-stopped
     ports:
-      - $PORT:$PORT
-      - $AIR_PROXY_PORT:$AIR_PROXY_PORT
+      # Map host port 5050 to the container's exposed port 8080
+      - "5050:4000"
+    volumes:
+      # Persist the SQLite database on the host machine.
+      # IMPORTANT: Replace '/path/to/your/data' with a real path on your server,
+      # for example: '/opt/go-app-data'
+      - /opt/go-app-data:/app/db
+    labels:
+      # This label tells Watchtower to monitor this container
+      - "com.centurylinklabs.watchtower.enable=true"
 
-
+# This service will watch for new images and update your application automatically
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 300 # Checks for new images every 5 minutes (300 seconds)
+    labels:
+      # We don't want Watchtower to try to update itself
+      - "com.centurylinklabs.watchtower.enable=false"

@@ -11,9 +11,7 @@
     --color-orange-400: oklch(75% 0.183 55.934);
     --color-yellow-200: oklch(94.5% 0.129 101.54);
     --color-yellow-400: oklch(85.2% 0.199 91.936);
-    --color-yellow-900: oklch(42.1% 0.095 57.708);
     --color-green-700: oklch(52.7% 0.154 150.069);
-    --color-green-900: oklch(39.3% 0.095 152.535);
     --color-violet-500: oklch(60.6% 0.25 292.717);
     --color-slate-500: oklch(55.4% 0.046 257.417);
     --spacing: 0.25rem;
@@ -194,24 +192,11 @@
   .flex {
     display: flex;
   }
-  .table {
-    display: table;
-  }
-  .border-collapse {
-    border-collapse: collapse;
-  }
-  .resize {
-    resize: both;
-  }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
   .gap-5 {
     gap: calc(var(--spacing) * 5);
-  }
-  .border {
-    border-style: var(--tw-border-style);
-    border-width: 1px;
   }
   .bg-red-200 {
     background-color: var(--color-red-200);
@@ -236,40 +221,18 @@
   .text-orange-400 {
     color: var(--color-orange-400);
   }
-  .text-yellow-200 {
-    color: var(--color-yellow-200);
-  }
   .text-yellow-400 {
     color: var(--color-yellow-400);
   }
-  .underline {
-    text-decoration-line: underline;
-  }
-  .outline {
-    outline-style: var(--tw-outline-style);
-    outline-width: 1px;
-  }
-}
-@property --tw-border-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
 }
 @property --tw-font-weight {
   syntax: "*";
   inherits: false;
 }
-@property --tw-outline-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
-}
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
-      --tw-border-style: solid;
       --tw-font-weight: initial;
-      --tw-outline-style: solid;
     }
   }
 }

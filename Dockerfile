@@ -1,34 +1,28 @@
-# --- Development Stage ---
-FROM golang:1.24.2 AS development
-
-# Set the working directory inside the container
+# ---- Generate Stage ----
+FROM ghcr.io/a-h/templ:latest AS generate-stage
 WORKDIR /app
+COPY --chown=65532:65532 . .
+RUN ["templ", "generate"]
 
-# Install air for live reloading
-# (Ensure you have network access during build if behind proxy)
-RUN go install github.com/air-verse/air@latest
-
-# Copy go mod and sum files first to leverage Docker cache
+# ---- Build Stage ----
+FROM golang:1.24.2-alpine AS build-stage
+WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
-
-# Copy the rest of the application source code
-# Note: This will be overlayed by the volume mount during dev,
-# but it's good practice for potential image rebuilding.
 COPY . .
+RUN GOARCH=arm64 CGO_ENABLED=0 GOOS=linux go build -o /app/myapp ./cmd/web/
 
-# Copy the air config file
-COPY .air.toml .
+# --- DEBUG STEP 1 ---
+# Check if the 'myapp' binary exists after the build.
+RUN ls -la /app
 
-# RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /app/main-prod ./main.go
+# ---- Deploy Stage ----
+FROM gcr.io/distroless/base-debian12 AS deploy-stage
+WORKDIR /app
+COPY --from=build-stage /app/myapp .
+COPY --from=build-stage /app/internal/db/migrations ./internal/db/migrations
+COPY --from=build-stage /app/ui ./ui
 
-# Expose the port the app runs on
-EXPOSE $PORT
-EXPOSE $AIR_PROXY_PORT
-
-ENV DB_PATH = $DB_PATH
-
-# Command to run air, which will build and run the app
-# Air will watch for changes in the mounted volume
-CMD ["air", "-c", ".air.toml", "-build.args_bin", "-port=:$PORT"]
-
+EXPOSE 4000
+USER nonroot:nonroot
+ENTRYPOINT ["/app/myapp"]
