@@ -1,6 +1,7 @@
 package components
 
 import "github.com/connordear/camp-forms/internal/models"
+import "fmt"
 
 templ HomePage(registrations []*models.Registration) {
 	<!DOCTYPE html>
@@ -13,19 +14,32 @@ templ HomePage(registrations []*models.Registration) {
 		</head>
 		<body>
 			<main>
-				<div class="flex col gap-2 mt-4 bg-red-200">
+				<div class="flex flex-col gap-2">
 					<h2>Latest Registrations</h2>
-					<p class="font-bold text-yellow-400 bg-slate-500">
-						yoyoyyoooyooo hahahah hi hi this There&apos;s nothing to see here yet! Or is there???
-						this gonna change
-					</p>
-					<button hx-post="/registrations" hx-target="next ul" hx-swap="beforeend">
+					<button
+						hx-post="/registrations"
+						hx-target="next ul"
+						hx-swap="beforeend"
+						class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+					>
 						Add
 						Registration
 					</button>
-					<ul>
+					<ul class="flex flex-col gap-4 w-full">
 						for _, reg := range registrations {
-							<li>{ reg.FirstName }</li>
+							<li class="flex items-center justify-between w-full">
+								<label>
+									{ reg.FirstName }
+								</label>
+								<button
+									hx-delete={ templ.SafeURL(fmt.Sprintf("registrations/%d", reg.ID)) }
+									hx-target="closest li"
+									hx-swap="outerHTML"
+									class="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded cursor-pointer"
+								>
+									Delete
+								</button>
+							</li>
 						}
 					</ul>
 				</div>

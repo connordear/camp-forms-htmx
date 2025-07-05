@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/connordear/camp-forms/internal/middleware"
@@ -63,6 +64,18 @@ func (app *application) createRegistration() http.HandlerFunc {
 
 }
 
+func (app *application) deleteRegistration(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	regId, err := strconv.Atoi(ps.ByName("id"))
+
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	app.InfoLog.Printf("Deleting Registration with ID: %d\n", regId)
+
+	app.Registrations.Delete(regId)
+}
+
 func (app *application) home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -98,6 +111,7 @@ func (app *application) router() http.Handler {
 	router.Handler(http.MethodGet, "/hello", templ.Handler(components.Hello("John")))
 	router.HandlerFunc(http.MethodDelete, "/all", app.deleteAll())
 	router.HandlerFunc(http.MethodPost, "/registrations", app.createRegistration())
+	router.DELETE("/registrations/:id", app.deleteRegistration)
 
 	standard := alice.New(middleware.RecoverPanic(app.ErrorLog), middleware.Logging(app.InfoLog), middleware.SecureHeaders)
 

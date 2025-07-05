@@ -105,3 +105,15 @@ func (m *RegistrationModel) Add(reg *Registration) (int, error) {
 	return int(id), nil
 
 }
+
+func (m *RegistrationModel) Delete(id int) error {
+	sql := `DELETE FROM registrations WHERE id = ?`
+
+	_, err := m.DB.Exec(sql, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
